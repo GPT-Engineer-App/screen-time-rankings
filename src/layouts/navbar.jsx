@@ -21,7 +21,7 @@ const Layout = () => {
         <MobileNav />
         <UserMenu />
       </header>
-      <main className="flex-grow p-4 overflow-auto">
+      <main className="flex-grow p-6 bg-gray-100 overflow-hidden">
         <Outlet />
       </main>
     </div>
@@ -34,8 +34,8 @@ const DesktopNav = () => (
       to="/"
       className="flex items-center gap-2 text-lg font-semibold md:text-base"
     >
-      <Package2 className="h-6 w-6" />
-      <span className="sr-only">Acme Inc</span>
+      <CircleUser className="h-6 w-6" />
+      <span className="sr-only">NewAppName</span>
     </NavItem>
     {navItems.map((item) => (
       <NavItem key={item.to} to={item.to}>
@@ -59,8 +59,8 @@ const MobileNav = () => (
           to="/"
           className="flex items-center gap-2 text-lg font-semibold"
         >
-          <Package2 className="h-6 w-6" />
-          <span className="sr-only">Acme Inc</span>
+          <CircleUser className="h-6 w-6" />
+          <span className="sr-only">NewAppName</span>
         </NavItem>
         {navItems.map((item) => (
           <NavItem key={item.to} to={item.to}>
