@@ -1,4 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const exampleData = {
@@ -47,32 +51,78 @@ const exampleData = {
 };
 
 const Leaderboard = () => {
+  const [category, setCategory] = useState("coding");
+  const [sortKey, setSortKey] = useState("rank");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const handleSort = (key) => {
+    if (sortKey === key) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortOrder("asc");
+    }
+  };
+
+  const sortedData = [...exampleData[category]].sort((a, b) => {
+    if (sortOrder === "asc") {
+      return a[sortKey] > b[sortKey] ? 1 : -1;
+    } else {
+      return a[sortKey] < b[sortKey] ? 1 : -1;
+    }
+  });
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-bold">Leaderboard</h1>
-      {["coding", "gaming", "activitywatch"].map((category) => (
-        <div key={category}>
-          <h2 className="text-2xl font-semibold capitalize">{category}</h2>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Rank</TableHead>
-                <TableHead>User</TableHead>
-                <TableHead>Screentime</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {exampleData[category].map((entry) => (
-                <TableRow key={entry.rank}>
-                  <TableCell>{entry.rank}</TableCell>
-                  <TableCell>{entry.user}</TableCell>
-                  <TableCell>{entry.screentime}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      ))}
+      <div className="flex space-x-4">
+        <Select onValueChange={setCategory} value={category}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="coding">Coding</SelectItem>
+            <SelectItem value="gaming">Gaming</SelectItem>
+            <SelectItem value="activitywatch">Activity Watch</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead onClick={() => handleSort("rank")}>Rank</TableHead>
+            <TableHead onClick={() => handleSort("user")}>User</TableHead>
+            <TableHead onClick={() => handleSort("screentime")}>Screentime</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sortedData.map((entry) => (
+            <TableRow key={entry.rank}>
+              <TableCell>{entry.rank}</TableCell>
+              <TableCell>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="link" onClick={() => setSelectedUser(entry.user)}>
+                      {entry.user}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{entry.user}'s Profile</DialogTitle>
+                    </DialogHeader>
+                    <div>
+                      <p>Total Screentime: {entry.screentime}</p>
+                      <p>Achievements: ...</p>
+                      <p>Other details: ...</p>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </TableCell>
+              <TableCell>{entry.screentime}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 };
