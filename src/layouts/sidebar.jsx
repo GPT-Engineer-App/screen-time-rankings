@@ -9,11 +9,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { CircleUser, Menu, Package2, List } from "lucide-react"; // Import List icon
+import { CircleUser, Menu, Package2, List, LogIn } from "lucide-react"; // Import List and LogIn icons
 import { NavLink, Outlet } from "react-router-dom";
 import { navItems } from "../App";
 
-const Layout = () => {
+const Layout = ({ isLoggedIn, onLogout }) => {
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <Sidebar />
@@ -21,7 +21,7 @@ const Layout = () => {
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           <MobileSidebar />
           <div className="w-full flex-1">{/* Add nav bar content here! */}</div>
-          <UserDropdown />
+          <UserDropdown isLoggedIn={isLoggedIn} onLogout={onLogout} />
         </header>
         <main className="flex-grow p-6 bg-gray-100 overflow-hidden">
           <Outlet />
@@ -81,7 +81,7 @@ const MobileSidebar = () => (
   </Sheet>
 );
 
-const UserDropdown = () => (
+const UserDropdown = ({ isLoggedIn, onLogout }) => (
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
       <Button variant="secondary" size="icon" className="rounded-full">
@@ -92,10 +92,15 @@ const UserDropdown = () => (
     <DropdownMenuContent align="end">
       <DropdownMenuLabel>My Account</DropdownMenuLabel>
       <DropdownMenuSeparator />
-      <DropdownMenuItem>Settings</DropdownMenuItem>
-      <DropdownMenuItem>Support</DropdownMenuItem>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem>Logout</DropdownMenuItem>
+      {isLoggedIn ? (
+        <>
+          <DropdownMenuItem onClick={onLogout}>Logout</DropdownMenuItem>
+        </>
+      ) : (
+        <DropdownMenuItem as={NavLink} to="/login">
+          Login
+        </DropdownMenuItem>
+      )}
     </DropdownMenuContent>
   </DropdownMenu>
 );
